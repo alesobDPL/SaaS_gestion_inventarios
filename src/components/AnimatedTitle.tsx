@@ -1,5 +1,6 @@
 import * as motion from "motion/react-client";
 
+
 export default function AnimatedTitle() {
   return (
     <motion.h1 

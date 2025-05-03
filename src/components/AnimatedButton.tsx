@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import * as motion from "motion/react-client";
+import { motion } from "motion/react"
 
 interface AnimatedButtonProps {
   href: string;
@@ -20,7 +20,8 @@ export default function AnimatedButton({ href, text, color }: AnimatedButtonProp
     >
       <Link href={href} className="w-full">
         <button
-          className={`w-full h-32 px-8 py-4 ${color} text-white rounded-xl shadow-xl hover:shadow-2xl transition duration-300 transform ease-in-out text-xl font-semibold flex justify-center items-center`}
+          className={`w-full h-32 px-8 py-4 ${color} text-white rounded-xl shadow-xl 
+          hover:shadow-2xl transition duration-300 transform ease-in-out text-xl font-semibold flex justify-center items-center`}
         >
           {text}
         </button>

@@ -1,198 +1,217 @@
-"use client";
+'use client'
 
 import { useEffect, useState } from "react";
-import SupplierForm from "./SupplierForm";
-import ProductForm from "@/app/products/ProductForm";
 import { Button } from "@/components/ui/button";
-
-interface Product {
-  id: number;
-  sku: number;
-  name: string;
-  stock: number;
-  price: number;
-  note: string;
-  category: string;
-}
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast"
+import { Loader2, ArrowLeft, ChevronDown, ChevronUp, Plus, Edit, Trash2 } from "lucide-react";
+import SupplierForm from "./SupplierForm";
+import { getSuppliers, createSupplier, updateSupplier, deleteSupplier } from "@/services/suppliers";
+import { Product } from "@/types/products"
+import { DataTableSuppliers } from "@/components/data-table-suppliers";
 
 interface Supplier {
   id: number;
   name: string;
-  contact: number | null; // Asegúrate de que contact pueda ser null
-  email: string | null; // Asegúrate de que email pueda ser null
+  contact: number;
+  email: string;
   product: Product[];
 }
+type ProductFormData = Pick<Product, "name" | "stock" | "price" | "note" | "category">;
 
 export default function SuppliersPage() {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [filteredSuppliers, setFilteredSuppliers] = useState<Supplier[]>([]);
   const [editingSupplier, setEditingSupplier] = useState<Supplier | null>(null);
   const [selectedSupplierId, setSelectedSupplierId] = useState<number | null>(null);
-  const [expandedSupplierId, setExpandedSupplierId] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [isDeleting, setIsDeleting] = useState<number | null>(null);
+  const { toast } = useToast();
+  type SupplierFormData = Pick<Supplier, "name" | "contact" | "email">;
 
-  // Obtener proveedores desde la API
+  // Obtener proveedores
   useEffect(() => {
-    async function fetchSuppliers() {
-      const response = await fetch("/api/suppliers");
-      const data = await response.json();
-      setSuppliers(data);
-      setFilteredSuppliers(data);
-    }
+    const fetchSuppliers = async () => {
+      try {
+        setLoading(true);
+        const data = await getSuppliers();
+        setSuppliers(data);
+        setFilteredSuppliers(data);
+
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error");
+        toast({
+          title: "Error",
+          description: "The suppliers could not be loaded",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchSuppliers();
-  }, []);
+  }, [toast]);
 
-  // Filtrar proveedores cuando cambia el término de búsqueda
+  // Filtrar proveedores (se mantiene igual)
   useEffect(() => {
-    const filtered = suppliers.filter(
-      (supplier) =>
-        supplier.name.toLowerCase().includes(searchTerm.toLowerCase())
+    const filtered = suppliers.filter(supplier =>
+      supplier.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (supplier.contact?.toString().includes(searchTerm) && supplier.contact.toString().includes(searchTerm)) ||
+      (supplier.email?.toLowerCase().includes(searchTerm) && supplier.email.toLowerCase().includes(searchTerm.toLowerCase()))
     );
     setFilteredSuppliers(filtered);
   }, [searchTerm, suppliers]);
 
-  // Guardar un proveedor (nuevo o editado)
-  const handleSaveSupplier = async (supplier: Omit<Supplier, "id">, id?: number) => {
-    const response = await fetch(id ? `/api/suppliers/${id}` : "/api/suppliers", {
-      method: id ? "PUT" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(supplier),
-    });
+  // Guardar proveedor (actualizado)
+  const handleSaveSupplier = async (supplierData: SupplierFormData, id?: number) => {
+    try {
+      let updatedSupplier;
+      if (id) {
+        updatedSupplier = await updateSupplier(id, supplierData);
+      } else {
+        updatedSupplier = await createSupplier(supplierData);
+      }
 
-    if (response.ok) {
-      const updatedSupplier = await response.json();
-      setSuppliers((prev) =>
-        id ? prev.map((s) => (s.id === id ? updatedSupplier : s)) : [...prev, updatedSupplier]
+      setSuppliers(prev =>
+        id
+          ? prev.map(s => s.id === id ? updatedSupplier : s)
+          : [updatedSupplier, ...prev]
       );
+
       setEditingSupplier(null);
+      toast({
+        title: "Success",
+        description: `Provider ${id ? "updated" : "Created"} correctly`,
+      });
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: err instanceof Error ? err.message : "Error al guardar proveedor",
+        variant: "destructive",
+      });
+      throw err;
     }
   };
 
-  // Eliminar un proveedor
+  // Eliminar proveedor (actualizado)
   const handleDeleteSupplier = async (id: number) => {
-    const response = await fetch(`/api/suppliers/${id}`, { method: "DELETE" });
-    if (response.ok) {
-      setSuppliers((prev) => prev.filter((s) => s.id !== id));
+    try {
+      setIsDeleting(id);
+      await deleteSupplier(id);
+
+      setSuppliers(prev => prev.filter(s => s.id !== id));
+      toast({
+        title: "Success",
+        description: "Provider eliminated correctly",
+      });
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: err instanceof Error ? err.message : "Error eliminated provider",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(null);
     }
   };
 
-  // Guardar un producto y vincularlo con el proveedor
-  const handleSaveProduct = async (product: Omit<Product, "id">, supplierId: number) => {
-    const response = await fetch(`/api/products`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...product, supplierId }),
-    });
+  // Agregar producto (se mantiene igual ya que no tenemos función en services)
+  const handleSaveProduct = async (productData: ProductFormData, supplierId: number) => {
+    try {
+      const response = await fetch("/api/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...productData, supplierId }),
+      });
 
-    if (response.ok) {
+      if (!response.ok) throw new Error("Error creating new product");
+
       const newProduct = await response.json();
-      setSuppliers((prev) =>
-        prev.map((s) =>
-          s.id === supplierId ? { ...s, product: [...(s.product || []), newProduct] } : s
+
+      setSuppliers(prev =>
+        prev.map(s =>
+          s.id === supplierId
+            ? { ...s, products: [...s.product, newProduct] }
+            : s
         )
       );
+
+      setSelectedSupplierId(null);
+      toast({
+        title: "Success",
+        description: "Producto creado correctamente",
+      });
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: err instanceof Error ? err.message : "Error creating Product",
+        variant: "destructive",
+      });
+      throw err;
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader2 className="h-12 w-12 animate-spin" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6 max-w-4xl mx-auto">
+        <div className="text-red-500 p-4 bg-red-50 rounded-lg">
+          {error}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      {/* Botón para volver */}
       <Button
         onClick={() => window.history.back()}
-        className="mb-4 bg-transparent text-gray-700 hover:bg-gray-100"
+        variant="ghost"
+        className="mb-4"
       >
-        ← Volver
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        Return
       </Button>
 
-      <h1 className="text-2xl font-bold mb-4 text-center">Gestión de Proveedores</h1>
+      <h1 className="text-2xl font-bold mb-6 text-center">Supplier Management</h1>
 
       {/* Barra de búsqueda */}
       <div className="mb-6">
-        <input
-          type="text"
-          placeholder="Buscar proveedores por nombre, contacto o email..."
+        <Input
+          placeholder="Search for suppliers by name, contact, or email..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all"
         />
       </div>
 
-      {/* Formulario para agregar/editar proveedores */}
-      <SupplierForm onSave={handleSaveSupplier} editingSupplier={editingSupplier} />
-
-      <h2 className="text-xl font-semibold mt-6">Lista de Proveedores</h2>
-      <div className="space-y-4 mt-4">
-        {filteredSuppliers.map((supplier) => (
-          <div
-            key={supplier.id}
-            className="border p-4 rounded-lg shadow-sm bg-white hover:shadow-md transition-shadow"
-          >
-            {/* Encabezado del proveedor */}
-            <div
-              className="flex justify-between items-center cursor-pointer"
-              onClick={() => setExpandedSupplierId(expandedSupplierId === supplier.id ? null : supplier.id)}
-            >
-              <span className="font-medium">{supplier.name}</span>
-              <div className="flex space-x-2">
-                <Button
-                  onClick={(e) => {
-                    e.stopPropagation(); // Evitar que el clic se propague al contenedor
-                    setEditingSupplier(supplier);
-                  }}
-                  className="bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors"
-                >
-                  Editar
-                </Button>
-                <Button
-                  onClick={(e) => {
-                    e.stopPropagation(); // Evitar que el clic se propague al contenedor
-                    handleDeleteSupplier(supplier.id);
-                  }}
-                  className="bg-red-50 text-red-700 hover:bg-red-100 transition-colors"
-                >
-                  Eliminar
-                </Button>
-              </div>
-            </div>
-
-            {/* Detalles expandidos del proveedor */}
-            {expandedSupplierId === supplier.id && (
-              <div className="mt-4 space-y-2 transition-all duration-300 ease-in-out">
-                <p className="text-gray-600">{supplier.contact}</p>
-                <p className="text-gray-600">{supplier.email}</p>
-
-                {/* Lista de productos */}
-                <h3 className="mt-4 font-semibold">Productos:</h3>
-                {supplier.product?.length > 0 ? (
-                  <ul className="list-disc pl-6">
-                    {supplier.product.map((product) => (
-                      <li key={product.id} className="mb-2">
-                        <strong>{product.name}</strong> - {product.stock} unidades - ${product.price} - SKU: {product.sku} <br />
-                        <span className="text-sm text-gray-600">{product.category} | {product.note}</span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-gray-500 text-sm">Este proveedor aún no tiene productos.</p>
-                )}
-
-                {/* Botón para agregar producto */}
-                <Button
-                  onClick={() => setSelectedSupplierId(supplier.id)}
-                  className="mt-2 bg-green-50 text-green-700 hover:bg-green-100 transition-colors"
-                >
-                  Agregar Producto
-                </Button>
-              </div>
-            )}
-          </div>
-        ))}
+      {/* Formulario de proveedor */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>
+            {editingSupplier ? "Edit Supplier" : "Add New Supplier"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <SupplierForm
+            onSave={handleSaveSupplier}
+            editingSupplier={editingSupplier}
+            onCancel={() => setEditingSupplier(null)}
+          />
+        </CardContent>
+      </Card>
+      <h2 className="text-xl font-semibold mb-4">Existing Providers</h2>
+      <DataTableSuppliers />
       </div>
-
-      {/* Formulario para agregar productos */}
-      {selectedSupplierId && (
-        <ProductForm supplierId={selectedSupplierId} onSave={handleSaveProduct} />
-      )}
-    </div>
   );
 }

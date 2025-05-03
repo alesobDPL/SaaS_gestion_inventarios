@@ -20,6 +20,9 @@
 #Seed tester
 /prisma/seed.ts
 
+#Lighthouse test performance.
+lighthouse-runner.js
+
 # production
 /build
 

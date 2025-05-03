@@ -1,5 +1,10 @@
 "use client";
 import * as motion from "motion/react-client";
+/* import { getOrders } from "@/services/orders";
+import { useState, useEffect } from "react";
+import { Order } from "@/types/products";
+import { toast } from "@/hooks/use-toast"; */
+
 
 const metrics = [
   { label: "Ingresos Mensuales", value: "$42,500", color: "bg-green-100 text-green-800" },
@@ -7,6 +12,30 @@ const metrics = [
   { label: "Clientes Activos", value: "1,245", color: "bg-blue-100 text-blue-800" },
   { label: "Productos en Stock", value: "3,560", color: "bg-purple-100 text-purple-800" },
 ];
+/* const [orders, setOrders] = useState<Product[]>([]); */
+
+/*   useEffect(() => {
+    const fetchData = async () => {
+      try {
+         setLoading(true); 
+        const [OrdersData] = await Promise.all([
+          getOrders(),
+          
+        ]);
+        setOrders(OrdersData);
+        
+      } catch (err: any) {
+         setError(err.message); 
+        toast({
+          title: "Error",
+          description: "No se pudieron cargar los datos",
+          variant: "destructive",
+        });
+      } finally {
+         setLoading(false); 
+      }
+    };
+  }, [toast]) */;
 
 export default function DashboardMetrics() {
   return (

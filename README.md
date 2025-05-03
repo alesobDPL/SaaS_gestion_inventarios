@@ -27,7 +27,7 @@
 ## 📥 Instalación  
 
 ### 1️⃣ Clona este repositorio  
-```bash
+``bash
 git clone https://github.com/tuusuario/inventory-manager.git
 cd inventory-manager
 

@@ -1,9 +1,8 @@
-"use client"
+'use client'
 import AnimatedText from "@/components/AnimatedText";
 import DashboardMetrics from "@/components/DashboardMetrics";
 import SalesChart from "@/components/SalesChart";
 import OrdersChart from "@/components/OrdersChart";
-import CustomersChart from "@/components/CustomersChart";
 import { Button } from "@/components/ui/button";
 
 export default function DashboardPage() {
@@ -27,7 +26,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
         <SalesChart />
         <OrdersChart />
-        <CustomersChart />
+        {/* <CustomersChart /> */}
       </div>
     </div>
   );

@@ -1,11 +1,15 @@
 import prisma from '@/lib/prisma';
 import { NextResponse } from 'next/server';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
-// ✅ GET: Obtener un supplier por ID
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+// Obtener un supplier por ID
+export async function GET(req: Request, context: any) {
   try {
     const supplier = await prisma.supplier.findUnique({
-      where: { id: Number(params.id) },
+      where: { id: Number(context.params.id) },
       include: { product: true },
     });
 
@@ -20,34 +24,66 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-// ✅ PUT: Actualizar un supplier
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+// PUT: Actualizar un supplier
+export async function PUT(request: Request, context: any) {
+  const params = await context.params
+  const id = Number(params.id)
   try {
-    const body = await req.json();
+    if (isNaN(id)) {
+      return NextResponse.json(
+        { error: "ID de proveedor inválido" },
+        { status: 400 }
+      );
+    }
+
+    const body = await request.json();
+
+    if (!body.name) {
+      return NextResponse.json(
+        { error: "El nombre es requerido" },
+        { status: 400 }
+      );
+    }
 
     const updatedSupplier = await prisma.supplier.update({
-      where: { id: Number(params.id) },
+      where: { id: id },
       data: {
         name: body.name,
-        contact: body.contact,
-        email: body.email,
-      },
+        contact: body.contact ? Number(body.contact) : body.contact,
+        email: body.email
+      }
     });
 
-    return NextResponse.json(updatedSupplier);
+    return NextResponse.json({
+      status: "success",
+      message: "Supplier actualizado correctamente",
+      data: updatedSupplier,
+    });
   } catch (error) {
-    console.error("Error updating supplier:", error);
-    return NextResponse.json({ error: 'Error updating supplier' }, { status: 500 });
+    console.error("Error detallado:", error);
+
+    if (error instanceof PrismaClientKnownRequestError) {
+      if (error.code === 'P2025') {
+        return NextResponse.json(
+          { error: "Proveedor no encontrado" },
+          { status: 404 }
+        );
+      }
+    }
+
+    return NextResponse.json(
+      { error: "Error interno del servidor" },
+      { status: 500 }
+    );
   }
 }
 
-// ✅ DELETE: Eliminar un supplier
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+// DELETE: Eliminar un supplier
+export async function DELETE(req: Request, context: any) {
   try {
     await prisma.supplier.delete({
-      where: { id: Number(params.id) },
+      where: { id: Number(context.params.id) },
     });
-
     return NextResponse.json({ message: "Supplier deleted" }, { status: 200 });
   } catch (error) {
     console.error("Error deleting supplier:", error);

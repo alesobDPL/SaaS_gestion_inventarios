@@ -9,7 +9,7 @@ export async function GET() {
           include: {
             product: {
               include: {
-                supplier: true, // 🔥 Asegurar que traemos el proveedor
+                supplier: true,
               },
             },
           },
@@ -23,7 +23,6 @@ export async function GET() {
     return NextResponse.json({ error: "Error fetching orders" }, { status: 500 });
   }
 }
-
 
 // Crear un nuevo pedido
 export async function POST(req: Request) {
@@ -39,6 +38,7 @@ export async function POST(req: Request) {
             productId: item.productId,
             quantity: item.quantity,
             price: item.price,
+            productName: item.productName
           })),
         },
       },

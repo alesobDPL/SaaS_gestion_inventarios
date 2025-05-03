@@ -1,8 +1,13 @@
 "use client";
 
-import * as motion from "motion/react-client";
+import { motion } from "motion/react"
 
-export default function AnimatedDescription() {
+interface Props {
+textToDisplay: string;
+
+}
+
+export default function AnimatedDescription({textToDisplay}: Props) {
   return (
     <motion.p
       className="text-lg text-gray-700 mb-12 text-center font-medium leading-relaxed"
@@ -10,8 +15,10 @@ export default function AnimatedDescription() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1, delay: 0.3 }}
     >
-      Administra tus productos, proveedores y pedidos de forma eficiente y profesional. 
-      Simplifica tu flujo de trabajo con herramientas intuitivas y un diseño limpio.
+      {textToDisplay}
     </motion.p>
   );
 }
+
+
+

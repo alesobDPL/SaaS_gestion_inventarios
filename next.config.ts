@@ -1,7 +1,13 @@
-import type { NextConfig } from "next";
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  experimental: {
+    typedRoutes: false,
+  },
+  // Nueva clave para Prisma (reemplaza serverComponentsExternalPackages)
+  serverExternalPackages: ['@prisma/client']
+}
 
-const nextConfig: NextConfig = {
-  /* config options here */
-};
-
-export default nextConfig;
+module.exports = nextConfig
