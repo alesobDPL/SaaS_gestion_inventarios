@@ -1,13 +1,13 @@
 "use client"
 
-import { useQuery } from "@tanstack/react-query"
+/*  import { useQuery } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
 import { getAuthStatus } from "./Actions"
-import { useRouter } from "next/navigation"
-import { Loader2 } from "lucide-react"
+import { useRouter } from "next/navigation" */
+import { Loader2 } from "lucide-react/icons" 
 
 const Page = () => {
-  const [configId, setConfigId] = useState<string | null>(null)
+/*   const [configId, setConfigId] = useState<string | null>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -32,7 +32,7 @@ const Page = () => {
         router.push("/")
       }
     }
-  }, [data, configId, router]) // Only run effect when data or configId changes
+  }, [data, configId, router]) // Only run effect when data or configId changes */
 
   return (
     <div className="w-full mt-24 flex justify-center">

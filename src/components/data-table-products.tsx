@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react"
+import {useEffect, useState, useId, useMemo} from "react"
 import {
   DndContext,
   KeyboardSensor,
@@ -36,8 +36,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import {
-  CheckCircle2Icon,
-  CheckCircleIcon,
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -51,8 +49,6 @@ import {
   TrendingUpIcon,
 } from "lucide-react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
-import { toast } from "sonner"
-import { z } from "zod"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { Badge } from "@/components/ui/badge"
@@ -107,34 +103,13 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 
-import { Loader2 } from "lucide-react";
 
 import { Product } from "@/types/products"
 import { getProducts } from "@/services/products"
 import { updateProduct } from "@/services/products"
 import { Toast } from "./ui/toast"
 import { useToast } from "@/hooks/use-toast"
-import { body } from "motion/react-client"
 
-
-export const schema = z.object({
-  id: z.number(),
-  name: z.string(),
-  sku: z.number(),
-  stock: z.number(),
-  price: z.number(),
-  note: z.string().optional(),
-  category: z.string().optional(),
-  supplierId: z.number().nullable().optional(),
-  createdAt: z.string(), // Puede ser `z.coerce.date()` si lo querés como Date
-  updatedAt: z.string(),
-  supplier: z.object({
-    id: z.number(),
-    name: z.string(),
-    contact: z.string().or(z.number()).optional(),
-    email: z.string().optional(),
-  }),
-})
 
 function DragHandle({ id }: { id: string | number }) {
   const { attributes, listeners } = useSortable({
@@ -286,27 +261,27 @@ function DraggableRow({ row }: { row: Row<Product> }) {
   )
 }
 
-export function DataTable() {
-  const [data, setData] = React.useState<Product[]>([])
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState('');
-  const [rowSelection, setRowSelection] = React.useState({})
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [pagination, setPagination] = React.useState({
+const DataTable = () => {
+  const [data, setData] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [rowSelection, setRowSelection] = useState({})
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   })
 
-  const sortableId = React.useId()
+  const sortableId = useId()
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
     useSensor(KeyboardSensor, {})
   )
 
-  const dataIds = React.useMemo(() => data.map(({ id }) => id), [data])
+  const dataIds = useMemo(() => data.map(({ id }) => id), [data])
 
   const table = useReactTable({
     data,
@@ -345,7 +320,7 @@ export function DataTable() {
   }
 
   //Get the data from the db
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -364,7 +339,7 @@ export function DataTable() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <Loader2 className="h-12 w-12 animate-spin" />
+        <LoaderIcon className="h-12 w-12 animate-spin" />
       </div>
     );
   }
@@ -603,7 +578,8 @@ export function DataTable() {
       </TabsContent>
     </Tabs>
   )
-}
+} 
+export default DataTable
 
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
@@ -630,7 +606,7 @@ function TableCellViewer({ item }: { item: Product }) {
   const { toast } = useToast()
 
 
-  const [form, setForm] = React.useState<Pick<Product, "name" | "stock" | "price" | "sku" | "note" | "category" | "isActive">>({
+  const [form, setForm] = useState<Pick<Product, "name" | "stock" | "price" | "sku" | "note" | "category" | "isActive">>({
     name: item.name,
     stock: item.stock,
     price: item.price,

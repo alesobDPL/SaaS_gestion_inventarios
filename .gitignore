@@ -20,8 +20,14 @@
 #Seed tester
 /prisma/seed.ts
 
+#Ai files(later to upload)
+src/app/api/ai**
+src/app/inventoryCopilot**
+src/components/LoadingThreeDotsPulse.tsx
+
 #Lighthouse test performance.
 lighthouse-runner.js
+/lighthouseReports
 
 # production
 /build

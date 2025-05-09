@@ -9,13 +9,13 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-export function SectionCards() {
+const SectionCards = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 px-4 lg:px-6">
       <Card className="@container/card">
         <CardHeader className="relative">
           <CardDescription>Total Revenue</CardDescription>
-          <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
+          <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums" >
             $1,250.00
           </CardTitle>
           <div className="absolute right-4 top-4">
@@ -99,3 +99,4 @@ export function SectionCards() {
     </div>
   )
 }
+export default SectionCards;

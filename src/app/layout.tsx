@@ -1,15 +1,20 @@
 import type { Metadata } from "next"
 import { Recursive } from "next/font/google"
 import "./globals.css"
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
+import AppSidebar from "@/components/app-sidebar"
 import { Toaster } from "@/components/ui/toaster"
-import Providers from "@/components/Providers"
-import { AppSidebar } from "@/components/app-sidebar"
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 
 
-const recursive = Recursive({ subsets: ["latin"] })
+
+const recursive = Recursive({
+  subsets: ["latin"],
+  display: 'swap',
+})
+
+
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,20 +28,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-
       <body className={recursive.className}>
-        <div >
+        <div className="flex flex-col min-h-screen">
           <SidebarProvider>
             <AppSidebar variant="inset" />
             <SidebarInset>
+              <Navbar />
               <main>
-                <Navbar/>
-                <div className="flex-1 flex flex-col h-full">
-                  <Providers>{children}</Providers>
-                </div>
-                <Footer />
-                <Toaster/>
+
+                {children}
+
               </main>
+              <Toaster />
+              <Footer />
             </SidebarInset>
           </SidebarProvider>
         </div>

@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-// Solución clave para Next.js 15.3+
-export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';  // Puedes usar 'edge' también si quieres.
-
 
 // GET
 export async function GET(request: Request, context: any) {

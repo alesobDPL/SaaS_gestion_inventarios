@@ -1,14 +1,17 @@
-import prisma from '@/lib/prisma';
 import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
 
 export async function GET() {
   try {
     const products = await prisma.product.findMany({
-      include: {supplier: true}
+      include: { supplier: true }
     });
     return NextResponse.json(products);
-  } catch{
-    return NextResponse.json({ error: 'Error fetching products' }, { status: 500 });
+  } catch {
+    return NextResponse.json(
+      { error: 'Error fetching products' }, 
+      { status: 500 }
+    );
   }
 }
 

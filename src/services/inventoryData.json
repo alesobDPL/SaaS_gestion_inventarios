@@ -1,0 +1,52 @@
+[
+    {
+      "name": "Laptop HP",
+      "stock": 34,
+      "minimumStock": 20
+    },
+    {
+      "name": "Mouse Logitech",
+      "stock": 12,
+      "minimumStock": 15
+    },
+    {
+      "name": "Monitor LG 1",
+      "stock": 7,
+      "minimumStock": 10
+    },
+    {
+      "name": "Monitor LG 2",
+      "stock": 70,
+      "minimumStock": 10
+    },
+    {
+      "name": "Monitor LG 3",
+      "stock": 77,
+      "minimumStock": 10
+    },
+    {
+      "name": "Monitor LG 4",
+      "stock": 77,
+      "minimumStock": 10
+    },
+    {
+      "name": "Teclado Redragon 1",
+      "stock": 25,
+      "minimumStock": 10
+    },
+    {
+      "name": "Teclado Redragon 2",
+      "stock": 30,
+      "minimumStock": 10
+    },
+    {
+      "name": "Teclado Redragon 3",
+      "stock": 5,
+      "minimumStock": 10
+    },
+    {
+      "name": "Teclado Redragon 4",
+      "stock": 77,
+      "minimumStock": 10
+    }
+  ]

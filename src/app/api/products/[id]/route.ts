@@ -1,5 +1,4 @@
 import prisma from '@/lib/prisma';
-import { param } from 'motion/react-client';
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request, context: any) {

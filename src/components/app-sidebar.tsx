@@ -1,16 +1,13 @@
 "use client"
 
-import * as React from "react"
+import {ComponentProps} from "react"
 import {
   ArrowUpCircleIcon,
-  BarChartIcon,
   CameraIcon,
   ClipboardListIcon,
   DatabaseIcon,
   FileCodeIcon,
-  FileIcon,
   FileTextIcon,
-  FolderIcon,
   HelpCircleIcon,
   LayoutDashboardIcon,
   ListIcon,
@@ -19,7 +16,7 @@ import {
   UsersIcon,
   ShoppingCart,
   Contact 
-} from "lucide-react"
+} from "lucide-react/icons"
 
 import { NavDocuments } from "@/components/nav-documents"
 import { NavMain } from "@/components/nav-main"
@@ -40,7 +37,7 @@ const data = {
   user: {
     name: "Admin",
     email: "admin@company.com",
-    avatar: "/avatars/shadcn.jpg",
+    avatar: "/avatars/shadcn.webp",
   },
   navMain: [
     {
@@ -153,7 +150,7 @@ const data = {
   ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+const AppSidebar = ({ ...props }: ComponentProps<typeof Sidebar>) => {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -182,3 +179,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     </Sidebar>
   )
 }
+
+export default AppSidebar

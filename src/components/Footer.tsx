@@ -1,4 +1,3 @@
-import React from 'react'
 import MaxWidthWrapper from './MaxWidthWrapper'
 import Link from 'next/link'
 
@@ -7,7 +6,6 @@ const Footer = () => {
         <footer className='bg-white h-20 relative'>
             <MaxWidthWrapper>
                 <div className='border-t border-gray-200' />
-
                 <div className='h-full flex flex-col md:flex-row
             md:justify-between justify-center items-center'>
                     <div className='text-center md:tex-left pb-2 md:pb-0'>

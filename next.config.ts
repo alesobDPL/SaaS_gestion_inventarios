@@ -6,8 +6,7 @@ const nextConfig = {
   experimental: {
     typedRoutes: false,
   },
-  // Nueva clave para Prisma (reemplaza serverComponentsExternalPackages)
-  serverExternalPackages: ['@prisma/client']
-}
+  serverExternalPackages: ['@prisma/client'],
+};
 
-module.exports = nextConfig
+module.exports = (nextConfig);
