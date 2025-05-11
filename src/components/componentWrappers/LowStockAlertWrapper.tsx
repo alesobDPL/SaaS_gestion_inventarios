@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useInView } from 'react-intersection-observer';
 
-const LowStockAlert = dynamic(() => import('@/components/LowStockAlert'), {
+const LowStockAlert = dynamic(() => import('@/components/LowStockChart'), {
   ssr: false,
   loading: () => <Skeleton className="h-[250px] w-full rounded-xl" />,
 });

@@ -6,15 +6,13 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import AppSidebar from "@/components/app-sidebar"
 import { Toaster } from "@/components/ui/toaster"
-
-
+import StockAlerts from "@/components/StockAlerts"
+import { Toaster as TT } from 'react-hot-toast';
 
 const recursive = Recursive({
   subsets: ["latin"],
   display: 'swap',
 })
-
-
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -35,11 +33,12 @@ export default function RootLayout({
             <SidebarInset>
               <Navbar />
               <main>
-
                 {children}
-
               </main>
+              <StockAlerts />
               <Toaster />
+              <TT position="top-center"
+                reverseOrder={false} />
               <Footer />
             </SidebarInset>
           </SidebarProvider>

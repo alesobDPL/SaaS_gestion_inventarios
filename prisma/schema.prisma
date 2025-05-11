@@ -37,8 +37,8 @@ model Supplier {
 }
 
 model Order {
-  id         Int         @id @default(autoincrement())
-  
+  id Int @id @default(autoincrement())
+
   totalPrice Float
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
@@ -74,4 +74,21 @@ model User {
 
   createAt  DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  type      String //What tipe of notificacion. If stock, order, product update
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  /**
+   * viaEmail  Boolean
+   * viaScoket Boolean
+   * viaPush   Boolean
+   * userId    String
+   * user User @relation(fields: [userId], references: [id])
+   */
 }

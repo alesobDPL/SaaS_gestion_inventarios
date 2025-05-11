@@ -1,10 +1,10 @@
 'use client'
 
-import {useState } from "react";
+import { useState } from "react";
 import OrderForm from "./OrderForm";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast"
-import { Loader2, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { createOrder } from "@/services/orders";
 import { Product } from "@/types/products"
 import { DataTableOrders } from "@/components/data-table-orders";
@@ -53,17 +53,6 @@ export default function OrdersPage() {
     }
   };
 
-  const productsFromOrders = Array.from(
-    new Map(
-      orders.flatMap(order =>
-        order.orderItems.map(item => [item.productId, item.product])
-      )
-    ).values()
-  ).filter(Boolean) as Product[];
-
-  const filteredOrders = filterStatus === "ALL"
-    ? orders
-    : orders.filter(order => order.status === filterStatus);
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -73,7 +62,7 @@ export default function OrdersPage() {
         className="mb-4"
       >
         <ArrowLeft className="mr-2 h-4 w-4" />
-        Volver
+        Return
       </Button>
 
       <h1 className="text-3xl font-bold text-center mb-6">Order Management</h1>

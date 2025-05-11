@@ -16,7 +16,7 @@ const Navbar = async () => {
     const isAdmin = null
   
     return (
-      <div className='sticky top-0 z-[100] w-full border-b bg-white/75 backdrop-blur-lg'>
+      <div className='sticky top-0 z-[20] w-full border-b bg-white/75 backdrop-blur-lg'>
         <MaxWidthWrapper>
           <div className='flex h-14 items-center justify-between border-b'>
           <SidebarTrigger className="-ml-1" />
