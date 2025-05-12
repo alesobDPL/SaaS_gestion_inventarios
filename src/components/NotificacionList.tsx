@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from "react"
-import  NotificationItem from "@/components/NotificacionItem"
+import NotificationItem from "@/components/NotificacionItem"
 
 export default function NotificationList() {
   const [notifications, setNotifications] = useState<any[]>([])

@@ -36,7 +36,7 @@ export async function DELETE(req: Request, context: any) {
       where: { id: params.id }
     });
 
-      return NextResponse.json(
+    return NextResponse.json(
       { message: 'Notificacion borrada' },
       { status: 200 }
     );
