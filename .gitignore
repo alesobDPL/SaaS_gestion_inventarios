@@ -21,7 +21,8 @@
 /prisma/seed.ts
 
 #Ai files(later to upload)
-src/app/api/ai**
+src/app/api/ai/filter-products**
+src/app/api/ai/suggest**
 src/app/inventoryCopilot**
 src/components/LoadingThreeDotsPulse.tsx
 

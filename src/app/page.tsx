@@ -5,7 +5,6 @@ import SectionCardsWrapper from '@/components/componentWrappers/SectionCardsWrap
 
 import data from "@/services/inventoryData.json"
 import DataTableWrapper from '@/components/componentWrappers/DataTableWrapper';
-import NotificationList from '@/components/NotificacionList';
 
 export default function HomePage() {
 
