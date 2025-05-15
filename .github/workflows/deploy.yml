@@ -32,8 +32,8 @@ jobs:
 
       - name: Agregar servidor a known_hosts
         run: |
-        mkdir -p ~/.ssh
-        ssh-keyscan -H 44.198.158.214 >> ~/.ssh/known_hosts
+          mkdir -p ~/.ssh
+          ssh-keyscan -H 44.198.158.214 >> ~/.ssh/known_hosts
 
 
       - name: Copiar archivos al servidor (vía SCP)
