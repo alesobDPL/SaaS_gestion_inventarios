@@ -3,7 +3,7 @@ name: Deploy to Lightsail
 on:
   push:
     branches:
-      - main  #change this if you've got another branch.
+      - main  # Cambiar si usás otra rama.
 
 jobs:
   deploy:
@@ -35,21 +35,22 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
-
       - name: Guardar la clave y copiar archivos al servidor
         run: |
           mkdir -p ~/.ssh
           printf "%s\n" "${SSH_PRIVATE_KEY}" > key.pem
           chmod 600 key.pem
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-          scp -i key.pem -r .next package.json node_modules public bitnami@${{ secrets.SERVER_IP }}:/home/bitnami/app
+
+          # Solo los archivos necesarios
+          scp -i key.pem -r .next package.json package-lock.json public ecosystem.config.cjs bitnami@${{ secrets.SERVER_IP }}:/home/bitnami/app
         env:
           SSH_PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY }}
-
 
       - name: Reiniciar app con PM2
         run: |
           ssh -i key.pem bitnami@${{ secrets.SERVER_IP }} << 'EOF'
             cd ~/app
-          pm2 restart gestion-inventarios || pm2 start ecosystem.config.js
+            npm ci
+            pm2 restart gestion-inventarios || pm2 start ecosystem.config.js
           EOF
