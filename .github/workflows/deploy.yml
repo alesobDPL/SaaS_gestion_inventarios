@@ -30,6 +30,12 @@ jobs:
       - name: Build de la app
         run: npm run build
 
+      - name: Agregar servidor a known_hosts
+        run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -H 44.198.158.214 >> ~/.ssh/known_hosts
+
+
       - name: Copiar archivos al servidor (vía SCP)
         env:
           SSH_PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY }}
