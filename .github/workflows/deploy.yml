@@ -1,0 +1,27 @@
+name: Deploy to Lightsail
+
+on:
+  push:
+    branches:
+      - main  # O la rama que estés usando
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código fuente
+        uses: actions/checkout@v4
+
+      - name: Instalar dependencias y compilar
+        run: |
+          npm ci
+          npm run build
+
+      - name: Copiar archivos al servidor (vía SCP)
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > key.pem
+          chmod 600 key.pem
+          scp -i key.pem -r .next package.json node_modules public bitnami@44.198.158.214:/home/bitnami/app
