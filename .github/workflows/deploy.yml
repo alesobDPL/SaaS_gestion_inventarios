@@ -3,7 +3,7 @@ name: Deploy to Lightsail
 on:
   push:
     branches:
-      - main  # Cambiar si usás otra rama.
+      - main  # Cambiar 
 
 jobs:
   deploy:
@@ -52,5 +52,5 @@ jobs:
           ssh -i key.pem bitnami@${{ secrets.SERVER_IP }} << 'EOF'
             cd ~/app
             npm ci
-            pm2 restart gestion-inventarios || pm2 start ecosystem.config.js
+            pm2 restart gestion-inventarios || pm2 start ecosystem.config.cjs
           EOF
