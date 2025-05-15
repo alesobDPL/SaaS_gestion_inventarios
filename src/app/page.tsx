@@ -12,7 +12,7 @@ export default function HomePage() {
     <div>
       <div className="px-8 py-32 text-center ">
         <h1 className="text-6xl font-bold">
-          Welcome to the dashboard
+          Welcome to the dashboard, jeje
         </h1>
         <p className="mt-2  text-muted-foreground">
           Here you'll find your metrics, inventory, and stock alerts.

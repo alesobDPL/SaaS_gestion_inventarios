@@ -45,3 +45,11 @@ jobs:
           scp -i key.pem -r .next package.json node_modules public bitnami@44.198.158.214:/home/bitnami/app
         env:
           SSH_PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY }}
+
+
+      - name: Reiniciar app con PM2
+        run: |
+          ssh -i key.pem bitnami@44.198.158.214 << 'EOF'
+            cd ~/app
+            pm2 restart gestion-inventarios || pm2 start ecosystem.config.js
+          EOF
