@@ -16,6 +16,17 @@ jobs:
       - name: Instalar dependencias y compilar
         run: |
           npm ci
+
+        - name: Set environment variables
+        run: |
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
+          echo "KINDE_CLIENT_ID=${{ secrets.KINDE_CLIENT_ID }}" >> $GITHUB_ENV
+          echo "KINDE_CLIENT_SECRET=${{ secrets.KINDE_CLIENT_SECRET }}" >> $GITHUB_ENV
+          echo "KINDE_ISSUER_URL=${{ secrets.KINDE_ISSUER_URL }}" >> $GITHUB_ENV
+          echo "KINDE_SITE_URL=${{ secrets.KINDE_SITE_URL }}" >> $GITHUB_ENV
+          echo "KINDE_POST_LOGOUT_REDIRECT_URL=${{ secrets.KINDE_POST_LOGOUT_REDIRECT_URL }}" >> $GITHUB_ENV
+          echo "KINDE_POST_LOGIN_REDIRECT_URL=${{ secrets.KINDE_POST_LOGIN_REDIRECT_URL }}" >> $GITHUB_ENV
+          echo "SERVIDOR=${{ secrets.SERVIDOR }}" >> $GITHUB_ENV
           npm run build
 
       - name: Copiar archivos al servidor (vía SCP)
