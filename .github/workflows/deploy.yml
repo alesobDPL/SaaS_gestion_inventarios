@@ -33,7 +33,7 @@ jobs:
       - name: Agregar servidor a known_hosts
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -H 44.198.158.214 >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
 
       - name: Guardar la clave y copiar archivos al servidor
@@ -41,15 +41,15 @@ jobs:
           mkdir -p ~/.ssh
           printf "%s\n" "${SSH_PRIVATE_KEY}" > key.pem
           chmod 600 key.pem
-          ssh-keyscan -H 44.198.158.214 >> ~/.ssh/known_hosts
-          scp -i key.pem -r .next package.json node_modules public bitnami@44.198.158.214:/home/bitnami/app
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+          scp -i key.pem -r .next package.json node_modules public bitnami@${{ secrets.SERVER_IP }}:/home/bitnami/app
         env:
           SSH_PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY }}
 
 
       - name: Reiniciar app con PM2
         run: |
-          ssh -i key.pem bitnami@44.198.158.214 << 'EOF'
+          ssh -i key.pem bitnami@${{ secrets.SERVER_IP }} << 'EOF'
             cd ~/app
-            pm2 restart gestion-inventarios || pm2 start ecosystem.config.js
+          pm2 restart gestion-inventarios || pm2 start ecosystem.config.js
           EOF
