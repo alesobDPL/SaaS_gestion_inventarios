@@ -3,7 +3,7 @@ name: Deploy to Lightsail
 on:
   push:
     branches:
-      - main  # O la rama que estés usando
+      - main  # Cambia esto si usás otra rama
 
 jobs:
   deploy:
@@ -13,11 +13,10 @@ jobs:
       - name: Checkout código fuente
         uses: actions/checkout@v4
 
-      - name: Instalar dependencias y compilar
-        run: |
-          npm ci
+      - name: Instalar dependencias
+        run: npm ci
 
-        - name: Set environment variables
+      - name: Set environment variables
         run: |
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
           echo "KINDE_CLIENT_ID=${{ secrets.KINDE_CLIENT_ID }}" >> $GITHUB_ENV
@@ -27,7 +26,9 @@ jobs:
           echo "KINDE_POST_LOGOUT_REDIRECT_URL=${{ secrets.KINDE_POST_LOGOUT_REDIRECT_URL }}" >> $GITHUB_ENV
           echo "KINDE_POST_LOGIN_REDIRECT_URL=${{ secrets.KINDE_POST_LOGIN_REDIRECT_URL }}" >> $GITHUB_ENV
           echo "SERVIDOR=${{ secrets.SERVIDOR }}" >> $GITHUB_ENV
-          npm run build
+
+      - name: Build de la app
+        run: npm run build
 
       - name: Copiar archivos al servidor (vía SCP)
         env:
