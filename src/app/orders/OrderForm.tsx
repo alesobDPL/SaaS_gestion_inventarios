@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { getProducts } from "@/services/products";
+import { getProducts, getProductsFiltered } from "@/services/products";
 import { OrderFormProps, Product_orderForm as Product } from "@/types/products";
 import {
   validateOrder,
@@ -39,6 +39,7 @@ export default function OrderForm({ onSave, isSubmitting }: OrderFormProps) {
       try {
         const productsData = await getProducts();
         setProducts(productsData);
+        console.log(productsData, "productos acá")
 
         const uniqueSuppliers: any = Array.from(
           new Map(

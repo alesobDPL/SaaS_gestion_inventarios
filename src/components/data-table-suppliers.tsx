@@ -1,6 +1,6 @@
 "use client"
 
-import {useEffect, useState, useId, useMemo} from "react"
+import { useEffect, useState, useId, useMemo } from "react"
 import {
   DndContext,
   KeyboardSensor,
@@ -53,7 +53,6 @@ import {
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 
 import { useIsMobile } from "@/hooks/use-mobile"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   ChartConfig,
@@ -107,10 +106,10 @@ import {
 
 import { Supplier } from "@/types/products"
 import { useToast } from "@/hooks/use-toast"
-import { deleteOrder} from "@/services/orders"
+import { deleteOrder } from "@/services/orders"
 import { getOrderItems } from "@/services/orderItems"
 import { formatDate } from "@/lib/formatDate"
-import { getSuppliers, updateSupplier } from "@/services/suppliers"
+import { getSuppliers, getSuppliersFiltered, updateSupplier } from "@/services/suppliers"
 
 
 
@@ -267,6 +266,7 @@ export function DataTableSuppliers() {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [sorting, setSorting] = useState<SortingState>([])
+  const [totalRows, setTotalRows] = useState(0);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
@@ -285,6 +285,7 @@ export function DataTableSuppliers() {
   const table = useReactTable({
     data,
     columns,
+    manualPagination: true,
     state: {
       sorting,
       columnVisibility,
@@ -320,11 +321,15 @@ export function DataTableSuppliers() {
 
   useEffect(() => {
     const fetchOrders = async () => {
+      const page = pagination.pageIndex + 1;
+      const limit = pagination.pageSize;
       try {
         setLoading(true);
-        const ordersData = await getSuppliers();
-        const orderItemsData = await getOrderItems()
-        setData(ordersData.sort((a: any, b: any) =>
+        const { data: suppliersData, total } = await getSuppliersFiltered({ page, limit });
+        console.log(suppliersData, total,"en el  frontend")
+
+        setTotalRows(total);
+        setData(suppliersData.sort((a: any, b: any) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         ));
       } catch (err: any) {
@@ -340,7 +345,7 @@ export function DataTableSuppliers() {
     };
 
     fetchOrders();
-  }, [toast]);
+  }, [toast, pagination]);
 
   if (loading) {
     return (

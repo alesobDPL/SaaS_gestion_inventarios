@@ -1,6 +1,6 @@
 "use client"
 
-import {useEffect, useState, useId, useMemo} from "react"
+import { useEffect, useState, useId, useMemo } from "react"
 import {
   DndContext,
   KeyboardSensor,
@@ -105,7 +105,7 @@ import {
 
 
 import { Product } from "@/types/products"
-import { getProducts } from "@/services/products"
+import { getProducts, getProductsFiltered } from "@/services/products"
 import { updateProduct } from "@/services/products"
 import { Toast } from "./ui/toast"
 import { useToast } from "@/hooks/use-toast"
@@ -170,11 +170,11 @@ const columns: ColumnDef<Product>[] = [
     },
     enableHiding: false,
   },
-/*   {
-    accessorKey: "name",
-    header: "Product Name",
-    cell: ({ row }) => <div className="font-medium">{row.original.name}</div>,
-  }, */
+  /*   {
+      accessorKey: "name",
+      header: "Product Name",
+      cell: ({ row }) => <div className="font-medium">{row.original.name}</div>,
+    }, */
   {
     accessorKey: "sku",
     header: "Sku",
@@ -206,34 +206,34 @@ const columns: ColumnDef<Product>[] = [
     header: "Supplier",
     cell: ({ row }) => <div>{row.original.supplier?.name || "Unknown"}</div>,
   },
-{
-  id: "actions",
-  cell: ({ row }) => {
-    return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="flex size-8 text-muted-foreground data-[state=open]:bg-muted"
-            size="icon"
-          >
-            <MoreVerticalIcon />
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>
-            Copy sku product
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Duplicate</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Deactivate Product</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    );
-  },
-}
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="flex size-8 text-muted-foreground data-[state=open]:bg-muted"
+              size="icon"
+            >
+              <MoreVerticalIcon />
+              <span className="sr-only">Open menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-32">
+            <DropdownMenuItem>
+              Copy sku product
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Duplicate</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Deactivate Product</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+  }
 ]
 
 function DraggableRow({ row }: { row: Row<Product> }) {
@@ -269,6 +269,7 @@ const DataTable = () => {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [sorting, setSorting] = useState<SortingState>([])
+  const [totalRows, setTotalRows] = useState(0);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
@@ -292,6 +293,7 @@ const DataTable = () => {
       rowSelection,
       columnFilters,
       pagination,
+
     },
     getRowId: (row) => row.id.toString(),
     enableRowSelection: true,
@@ -306,6 +308,8 @@ const DataTable = () => {
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    manualPagination: true,
+    pageCount: Math.ceil(totalRows / pagination.pageSize),
   })
 
   function handleDragEnd(event: DragEndEvent) {
@@ -322,10 +326,13 @@ const DataTable = () => {
   //Get the data from the db
   useEffect(() => {
     const fetchData = async () => {
+      const page = pagination.pageIndex + 1; 
+      const limit = pagination.pageSize;
       try {
         setLoading(true);
-        const productsData = await getProducts();
+        const { data: productsData, total } = await getProductsFiltered({ page, limit });
         setData(productsData || []);
+        setTotalRows(total);
       } catch (error: any) {
         setError(error.message);
       } finally {
@@ -334,7 +341,9 @@ const DataTable = () => {
     };
 
     fetchData();
-  }, []);
+  }, [pagination]);
+
+
 
   if (loading) {
     return (
@@ -578,7 +587,7 @@ const DataTable = () => {
       </TabsContent>
     </Tabs>
   )
-} 
+}
 export default DataTable
 
 const chartData = [
@@ -618,16 +627,16 @@ function TableCellViewer({ item }: { item: Product }) {
 
   async function handleSubmit() {
     try {
-      
-      const res = await updateProduct(item.id,form)
+
+      const res = await updateProduct(item.id, form)
 
       if (!res.success) throw new Error(res.message);
-      
+
       toast({
         title: "Éxito",
         description: "Producto actualizado correctamente",
       });
-  
+
     } catch (error) {
       toast({
         title: "Error",
@@ -766,7 +775,7 @@ function TableCellViewer({ item }: { item: Product }) {
               <Separator />
             </>
           )}
-        
+
         </div>
 
         <SheetFooter className="mt-auto flex gap-2 sm:flex-col sm:space-x-0">

@@ -1,6 +1,6 @@
 "use client"
 
-import {useEffect, useState, useId, useMemo} from "react"
+import { useEffect, useState, useId, useMemo } from "react"
 import {
   DndContext,
   KeyboardSensor,
@@ -184,26 +184,26 @@ const columns: ColumnDef<Order>[] = [
     header: "Estado",
     cell: ({ row }) => {
       const status = row.original.status;
-  
+
       const statusMap: any = {
         PENDING: { label: "Pendiente", color: "bg-yellow-500" },
         SHIPPED: { label: "Enviado", color: "bg-blue-500" },
         COMPLETED: { label: "Completado", color: "bg-green-500" },
         CANCELED: { label: "Cancelado", color: "bg-red-500" },
       };
-  
+
       const { label, color } = statusMap[status] || {
         label: "Desconocido",
         color: "bg-gray-500",
       };
-  
+
       return (
         <Badge variant="secondary" className={color}>
           {label}
         </Badge>
       );
     },
-  },  
+  },
   {
     accessorKey: "totalPrice",
     header: "Total price",
@@ -218,19 +218,19 @@ const columns: ColumnDef<Order>[] = [
       const handleDeleteOrder = async (id: number) => {
         try {
           await deleteOrder(id);
-          
+
           toast({
             title: "Éxito",
             description: "Orden eliminada correctamente",
           });
-        } catch{
+        } catch {
           toast({
             title: "Error",
             description: "No se pudo eliminar la orden",
             variant: "destructive",
           });
         } finally {
-  //Coment
+          //Coment
         }
       };
       return (
@@ -293,6 +293,7 @@ export function DataTableOrders() {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [sorting, setSorting] = useState<SortingState>([])
+  const [totalRows, setTotalRows] = useState(0);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
@@ -331,6 +332,9 @@ export function DataTableOrders() {
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    manualPagination: true,
+    pageCount: Math.ceil(totalRows / pagination.pageSize),
+
   })
 
   function handleDragEnd(event: DragEndEvent) {
@@ -346,13 +350,16 @@ export function DataTableOrders() {
 
   useEffect(() => {
     const fetchOrders = async () => {
+      const page = pagination.pageIndex + 1;
+      const limit = pagination.pageSize;
       try {
         setLoading(true);
-        const ordersData = await getOrders();
-        const orderItemsData = await getOrderItems()
+        const { data: ordersData, total } = await getOrders({ page, limit });
+
         setData(ordersData.sort((a: any, b: any) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         ));
+        setTotalRows(total);
       } catch (err: any) {
         setError(err.message);
         toast({
@@ -366,7 +373,7 @@ export function DataTableOrders() {
     };
 
     fetchOrders();
-  }, [toast]);
+  }, [toast, pagination]);
 
   if (loading) {
     return (
@@ -633,18 +640,18 @@ function TableCellViewer({ item }: { item: Order }) {
     try {
       // Enviar la solicitud de actualización
       const res = await updateOrder(item.id, form.status);
-  
+
       // Verificar que la respuesta sea exitosa
       if (res.status !== "success") {
         throw new Error(res.message || "Error desconocido al actualizar el pedido");
       }
-  
+
       // Mostrar mensaje de éxito
       toast({
         title: "Éxito",
         description: "Producto actualizado correctamente",
       });
-  
+
     } catch (error: any) {
       // Mostrar mensaje de error en caso de fallo
       toast({
@@ -654,7 +661,7 @@ function TableCellViewer({ item }: { item: Order }) {
       });
     }
   }
-  
+
 
   return (
     <Sheet>
@@ -681,7 +688,7 @@ function TableCellViewer({ item }: { item: Order }) {
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-3">
                   <Label htmlFor="date">Date</Label>
-                  <Input id="stock" type="string" disabled  defaultValue={String(formatDate(item.createdAt)) || ""} onChange={(e) => setForm({ ...form, createdAt: (e.target.value) })} />
+                  <Input id="stock" type="string" disabled defaultValue={String(formatDate(item.createdAt)) || ""} onChange={(e) => setForm({ ...form, createdAt: (e.target.value) })} />
                 </div>
               </div>
 

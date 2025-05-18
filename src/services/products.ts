@@ -1,9 +1,21 @@
 import api from "@/lib/api";
 
-export const getProducts = async ()=>{
-    const response = await api.get('/products');
+export const getProductsFiltered = async ({ page = 1, limit = 10 } = {}) => {
+  const response = await api.get('/products', {
+    params: { page, limit }
+  });
+  return response.data
+};
+
+export const getProducts = async () => {
+    const response = await api.get(`/products/all`);
     return response.data;
-}
+  };
+
+  export const getProductsWithRedis = async () => {
+    const response = await api.get(`/products/with-redis`);
+    return response.data;
+  };
 
 export const getProduct = async (id: number) => {
     const response = await api.get(`/products/${id}`);

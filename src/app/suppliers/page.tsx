@@ -18,7 +18,6 @@ interface Supplier {
   email: string;
   product: Product[];
 }
-type ProductFormData = Pick<Product, "name" | "stock" | "price" | "note" | "category">;
 
 export default function SuppliersPage() {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
@@ -38,6 +37,7 @@ export default function SuppliersPage() {
       try {
         setLoading(true);
         const data = await getSuppliers();
+        console.log(data, "dentro de page supplier")
         setSuppliers(data);
         setFilteredSuppliers(data);
 
@@ -119,41 +119,6 @@ export default function SuppliersPage() {
     }
   };
 
-  // Agregar producto (se mantiene igual ya que no tenemos función en services)
-  const handleSaveProduct = async (productData: ProductFormData, supplierId: number) => {
-    try {
-      const response = await fetch("/api/products", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...productData, supplierId }),
-      });
-
-      if (!response.ok) throw new Error("Error creating new product");
-
-      const newProduct = await response.json();
-
-      setSuppliers(prev =>
-        prev.map(s =>
-          s.id === supplierId
-            ? { ...s, products: [...s.product, newProduct] }
-            : s
-        )
-      );
-
-      setSelectedSupplierId(null);
-      toast({
-        title: "Success",
-        description: "Producto creado correctamente",
-      });
-    } catch (err) {
-      toast({
-        title: "Error",
-        description: err instanceof Error ? err.message : "Error creating Product",
-        variant: "destructive",
-      });
-      throw err;
-    }
-  };
 
   if (loading) {
     return (

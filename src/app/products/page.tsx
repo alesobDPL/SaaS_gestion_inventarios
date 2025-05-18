@@ -10,7 +10,6 @@ import { getSuppliers } from "@/services/suppliers";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, ArrowLeft, ChevronDown, ChevronUp, X, Save, Edit, Trash2 } from "lucide-react";
-/* import { DataTable } from "@/components/data-table-products"; */
 import DataTableWrapper from "@/components/componentWrappers/DataTableWrapper";
 
 export default function ProductsPage() {

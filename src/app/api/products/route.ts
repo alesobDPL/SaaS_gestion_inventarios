@@ -1,20 +1,33 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const products = await prisma.product.findMany({
-      include: { supplier: true }
-    });
-    return NextResponse.json(products);
-  } catch {
+    // Leer los parámetros de la query
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const limit = parseInt(searchParams.get('limit') || '20', 10);
+    const skip = (page - 1) * limit;
+
+    // Obtener productos paginados y el total
+    const [products, total] = await Promise.all([
+      prisma.product.findMany({
+        skip,
+        take: limit,
+        include: { supplier: true },
+      }),
+      prisma.product.count(),
+    ]);
+
+    return NextResponse.json({ data: products, total });
+  } catch (error) {
+    console.error(error);
     return NextResponse.json(
-      { error: 'Error fetching products' }, 
+      { error: 'Error fetching products' },
       { status: 500 }
     );
   }
 }
-
 export async function POST(req: Request) {
   try {
     const body = await req.json();

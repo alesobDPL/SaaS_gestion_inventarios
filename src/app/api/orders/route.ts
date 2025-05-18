@@ -1,26 +1,35 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const orders = await prisma.order.findMany({
-      include: {
-        orderItems: {
-          include: {
-            product: {
-              include: {
-                supplier: true,
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const limit = parseInt(searchParams.get('limit') || '10', 10);
+
+    const [orders, total] = await Promise.all([
+      prisma.order.findMany({
+        include: {
+          orderItems: {
+            include: {
+              product: {
+                include: {
+                  supplier: true,
+                },
               },
             },
           },
         },
-      },
-    });
-
-    return NextResponse.json(orders);
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.order.count(),
+    ]);
+    return NextResponse.json({ data: orders, total });
   } catch (error) {
-    console.error("Error fetching orders:", error);
-    return NextResponse.json({ error: "Error fetching orders" }, { status: 500 });
+    console.error('Error fetching orders:', error);
+    return NextResponse.json({ error: 'Error fetching orders' }, { status: 500 });
   }
 }
 

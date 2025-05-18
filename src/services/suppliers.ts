@@ -1,9 +1,18 @@
 import api from "@/lib/api";
 
-export const getSuppliers = async ()=>{
-    const response = await api.get('/suppliers');
-    return response.data;
-}
+export const getSuppliersFiltered = async ({ page = 1, limit = 10 } = {}) => {
+  const response = await api.get('/suppliers', {
+    params: { page, limit },
+  });
+  console.log(response.data)
+  return response.data;
+};
+
+export const getSuppliers = async () => {
+  const response = await api.get('/suppliers/all');
+   console.log(response.data)
+  return response.data;
+};
 
 export const getSupplier = async (id: number) => {
     const response = await api.get(`/suppliers/${id}`);
