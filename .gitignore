@@ -28,6 +28,9 @@ src/app/api/ai/suggest**
 lighthouse-runner.js
 /lighthouseReports
 
+#stress test 
+stress_test**
+
 # production
 /build
 

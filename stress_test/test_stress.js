@@ -9,5 +9,11 @@ export const options = {
 };
 
 export default function () {
-  http.get('http://44.198.158.214:3000/api/products'); // Cambia esta URL por la de tu backend en producción
+  http.get('http://44.198.158.214:3000/api/products/with-redis'); // Cambia esta URL por la de tu backend en producción
 }
+
+
+
+/* fojuc = https://fojucc.cl/ 
+http.get('http://44.198.158.214:3000/api/products/with-redis'); // Cambia esta URL por la de tu backend en producción
+*/

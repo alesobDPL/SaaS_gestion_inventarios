@@ -1,6 +1,6 @@
 'use server'
 
-import { db } from '@/db'
+import prisma from "@/lib/prisma"
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server'
 
 export const getAuthStatus = async () => {
@@ -11,12 +11,12 @@ export const getAuthStatus = async () => {
     throw new Error('Invalid user data')
   }
 
-  const existingUser = await db.user.findFirst({
+  const existingUser = await prisma.user.findFirst({
     where: { id: user.id },
   })
 
   if (!existingUser) {
-    await db.user.create({
+    await prisma.user.create({
       data: {
         id: user.id,
         email: user.email,
